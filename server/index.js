@@ -44,7 +44,7 @@ app.ws('/chat', function(ws, req) {
                     };
 
                     connection.send(JSON.stringify({
-                        type: 'NEW_MESSAGE',
+                        type: 'NEW_DRAWING',
                         ...newDrawing,
                     }));
 
@@ -60,8 +60,10 @@ app.ws('/chat', function(ws, req) {
         }
     });
 
-    ws.on('message', function(msg) {
-        ws.send(msg);
+    ws.on('close', (msg) => {
+        console.log(`client disconnected: ${id}`);
+
+        delete connections[id];
     });
 });
 
