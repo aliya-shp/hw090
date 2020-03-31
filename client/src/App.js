@@ -43,6 +43,17 @@ class App extends Component {
 
   canvas = createRef();
 
+  // updateCanvas = (x, y, color) => {
+  //   const canvas = this.canvas.current;
+  //   const ctx = canvas.getContext('2d');
+  //
+  //   ctx.fillStyle = color;
+  //   ctx.beginPath();
+  //   ctx.arc(x, y, 20, 0, 2 * Math.PI);
+  //   ctx.fill();
+  //   ctx.stroke();
+  // };
+
   onCanvasClick = event => {
     event.persist();
     const canvas = this.canvas.current;
@@ -58,6 +69,8 @@ class App extends Component {
     ctx.arc(x, y, 20, 0, 2 * Math.PI);
     ctx.fill();
     ctx.stroke();
+    ctx.save();
+    console.log(ctx.getImageData(0,0,800,800));
 
     const drawing = {
       type: 'NEW_DRAWING',
@@ -86,7 +99,21 @@ class App extends Component {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   };
 
+  updateCanvas = () => {
+    this.state.drawings.forEach(d => {
+      const canvas = this.canvas.current;
+      const ctx = canvas.getContext('2d');
+      const rect = canvas.getBoundingClientRect();
+      ctx.fillStyle = d.drawing.color;
+      ctx.beginPath();
+      ctx.arc(d.drawing.x - rect.left, d.drawing.y - rect.top, 20, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.stroke();
+    });
+  };
+
     render() {
+      this.updateCanvas();
         return (
             <div width="1100" height="auto" style={{'display': 'flex', 'flexDirection': 'column'}}>
               <form onSubmit={this.setUsername} style={{'alignSelf': 'center', 'marginTop': '20px'}}>
