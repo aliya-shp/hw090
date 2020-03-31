@@ -5,6 +5,7 @@ class App extends Component {
     username: 'Anonymous',
     drawing: {},
     drawings: [],
+    color: 'black',
   };
 
   componentDidMount() {
@@ -44,7 +45,6 @@ class App extends Component {
 
   onCanvasClick = event => {
     event.persist();
-
     const canvas = this.canvas.current;
     const ctx = canvas.getContext('2d');
     const rect = canvas.getBoundingClientRect();
@@ -52,26 +52,45 @@ class App extends Component {
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
 
-    ctx.fillStyle = 'green';
-    ctx.fillRect(x - 5, y - 5, 10, 10);
+    ctx.fillStyle = this.state.color;
 
-    const drawing = {x, y};
-
-    this.setState({drawing});
+    ctx.beginPath();
+    ctx.arc(x, y, 20, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.stroke();
   };
 
   changeField = (event) => this.setState({[event.target.name]: event.target.value});
 
+  changeColor = event => {
+    const id = event.target.id;
+    this.setState({color: id});
+  };
+
+  clearCanvas = () => {
+    const canvas = this.canvas.current;
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  };
+
     render() {
         return (
-            <>
-              <form onSubmit={this.setUsername}>
+            <div width="1100" height="auto" style={{'display': 'flex', 'flexDirection': 'column'}}>
+              <form onSubmit={this.setUsername} style={{'alignSelf': 'center', 'marginTop': '20px'}}>
                 <input type="text" value={this.state.username} name="username" onChange={this.changeField}/>
                 <button type="submit">Set username</button>
               </form>
-
-              <canvas width="1000" height="800" ref={this.canvas} onClick={this.onCanvasClick}/>
-            </>
+              <br/>
+              <canvas width="800" height="500" ref={this.canvas} onClick={this.onCanvasClick} style={{border:'2px solid black', 'alignSelf': 'center'}}/>
+              <form style={{'alignSelf': 'center'}}>
+                <button type="button" id="red" onClick={this.changeColor}>Red</button>
+                <button type="button" id="green" onClick={this.changeColor}>Green</button>
+                <button type="button" id="blue" onClick={this.changeColor}>Blue</button>
+                <button type="button" id="yellow" onClick={this.changeColor}>Yellow</button>
+                <button onClick={this.clearCanvas}>Clear canvas</button>
+              </form>
+            </div>
         );
     }
 }
