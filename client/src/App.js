@@ -58,6 +58,18 @@ class App extends Component {
     ctx.arc(x, y, 20, 0, 2 * Math.PI);
     ctx.fill();
     ctx.stroke();
+
+    const drawing = {
+      type: 'NEW_DRAWING',
+      username: this.state.username,
+      drawing: {
+        x,
+        y,
+        color: this.state.color,
+      }
+    };
+
+    this.websocket.send(JSON.stringify(drawing));
   };
 
   changeField = (event) => this.setState({[event.target.name]: event.target.value});
